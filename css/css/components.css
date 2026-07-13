@@ -1,0 +1,112 @@
+/* ===========================
+   Filter Bar
+=========================== */
+
+#searchBox,
+.form-select {
+    border-radius: 10px;
+    padding: .75rem;
+    border: 1px solid #d1d5db;
+}
+
+#searchBox:focus,
+.form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 .2rem rgba(37,99,235,.2);
+}
+
+/* ===========================
+   Buttons
+=========================== */
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* ===========================
+   Chart Cards
+=========================== */
+
+.chart-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.chart-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid #ececec;
+}
+
+.chart-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+.chart-body {
+    padding: 24px;
+}
+
+.chart-footer {
+    border-top: 1px solid #ececec;
+    padding: 15px 24px;
+    color: #6b7280;
+    font-size: .9rem;
+}
+
+/* ===========================
+   Statistic Cards
+=========================== */
+
+.stat-card {
+    background: white;
+    border-radius: 14px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.stat-card i {
+    font-size: 2rem;
+    color: #2563eb;
+    margin-bottom: 15px;
+}
+
+.stat-card h2 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.stat-card p {
+    color: #6b7280;
+    margin-top: 8px;
+}
+
+/* ===========================
+   Canvas
+=========================== */
+
+canvas {
+    max-height: 420px;
+}
+
+/* ===========================
+   Hover Animation
+=========================== */
+
+.card,
+.chart-card,
+.stat-card {
+    transition: all .25s ease;
+}
+
+.card:hover,
+.chart-card:hover,
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,.12);
+}
