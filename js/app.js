@@ -1,258 +1,435 @@
-// =========================================
-// 2026 TPC Survey Dashboard
-// app.js
-// =========================================
+/* ===========================================
+   TPC Survey Dashboard
+   app.js
+   =========================================== */
 
-// --------------------------------------------------
-// SAMPLE DATA
-// Replace this with your actual survey data later.
-// --------------------------------------------------
+'use strict';
 
-const surveyData = [
+/* -------------------------------
+   Configuration
+--------------------------------*/
 
-    {
-        category: "Demographics",
-        question: "Gender",
-        chart: "pie",
-        labels: [
-            "Male",
-            "Female",
-            "Other"
-        ],
-        values: [
-            61,
-            36,
-            3
-        ]
-    },
+const DATA_URL = "data/responses.json";
 
-    {
-        category: "Religion",
-        question: "Religious Affiliation",
-        chart: "doughnut",
-        labels: [
-            "Christian",
-            "Atheist",
-            "Muslim",
-            "Hindu",
-            "Other"
-        ],
-        values: [
-            42,
-            27,
-            13,
-            9,
-            9
-        ]
-    },
+const CATEGORY_KEYWORDS = {
+    Demographics: [
+        "age",
+        "gender",
+        "region",
+        "member",
+        "religious orientation",
+        "academia",
+        "citation",
+        "training",
+        "world",
+        "live",
+        "formal"
+    ],
 
-    {
-        category: "Politics",
-        question: "Political Orientation",
-        chart: "bar",
-        labels: [
-            "Left",
-            "Centre",
-            "Right"
-        ],
-        values: [
-            34,
-            41,
-            25
-        ]
-    },
+    Religion: [
+        "religion",
+        "god",
+        "atheism",
+        "theism",
+        "religious"
+    ],
 
-    {
-        category: "AI",
-        question: "Should AI have rights?",
-        chart: "bar",
-        labels: [
-            "Yes",
-            "No",
-            "Unsure"
-        ],
-        values: [
-            29,
-            45,
-            26
-        ]
-    }
+    Politics: [
+        "capitalism",
+        "socialism",
+        "political",
+        "libertarian",
+        "egalitarian",
+        "communitarian",
+        "dictator"
+    ],
 
-];
+    AI: [
+        "ai",
+        "artificial intelligence"
+    ],
 
-// --------------------------------------------------
-// DOM
-// --------------------------------------------------
+    Philosophy: [
+        "philosophy",
+        "knowledge",
+        "mind",
+        "ethics",
+        "metaphysics",
+        "epistemology",
+        "logic",
+        "consciousness",
+        "free will",
+        "realism",
+        "empiricism",
+        "rationalism",
+        "meaning of life",
+        "probability",
+        "trolley",
+        "ship of theseus",
+        "experience machine",
+        "zombies",
+        "philosopher"
+    ]
+};
+
+/* -------------------------------
+   Global State
+--------------------------------*/
+
+const state = {
+
+    rawData: [],
+
+    questions: [],
+
+    charts: [],
+
+    search: "",
+
+    category: "All"
+
+};
+
+/* -------------------------------
+   DOM
+--------------------------------*/
 
 const dashboard = document.getElementById("dashboard");
-const searchBox = document.getElementById("searchBox");
+
+const spinner = document.getElementById("loadingSpinner");
+
+const searchInput = document.getElementById("searchInput");
+
 const categoryFilter = document.getElementById("categoryFilter");
+
 const resetButton = document.getElementById("resetFilters");
 
-// --------------------------------------------------
-// Populate Categories
-// --------------------------------------------------
+const emptyMessage = document.getElementById("emptyState");
 
-const categories = [...new Set(surveyData.map(item => item.category))];
+/* -------------------------------
+   Initialize
+--------------------------------*/
 
-categories.forEach(category => {
+document.addEventListener("DOMContentLoaded", init);
 
-    const option = document.createElement("option");
+async function init() {
 
-    option.value = category;
-    option.textContent = category;
+    showSpinner(true);
 
-    categoryFilter.appendChild(option);
+    try {
 
-});
+        await loadSurvey();
 
-// --------------------------------------------------
-// Render Dashboard
-// --------------------------------------------------
+        attachEvents();
 
-function renderDashboard(data) {
+        renderDashboard();
 
-    dashboard.innerHTML = "";
+    }
 
-    data.forEach((item, index) => {
+    catch (err) {
 
-        const card = document.createElement("div");
+        console.error(err);
 
-        card.className = "chart-card";
-
-        card.innerHTML = `
-
-            <div class="chart-header">
-
-                <h3>${item.question}</h3>
-
-                <small>${item.category}</small>
-
+        dashboard.innerHTML = `
+            <div class="alert alert-danger">
+                Failed to load responses.json
             </div>
-
-            <div class="chart-body">
-
-                <canvas id="chart${index}"></canvas>
-
-            </div>
-
         `;
 
-        dashboard.appendChild(card);
+    }
 
-        createChart(item, index);
+    finally {
+
+        showSpinner(false);
+
+    }
+
+}
+
+/* -------------------------------
+   Load Survey
+--------------------------------*/
+
+async function loadSurvey() {
+
+    const response = await fetch(DATA_URL);
+
+    if (!response.ok) {
+
+        throw new Error("Cannot load responses.json");
+
+    }
+
+    state.rawData = await response.json();
+
+    analyzeSurvey();
+
+}
+
+/* -------------------------------
+   Analyze Entire Survey
+--------------------------------*/
+
+function analyzeSurvey() {
+
+    if (!state.rawData.length) return;
+
+    const first = state.rawData[0];
+
+    const questions = Object.keys(first);
+
+    state.questions = questions.map(question => {
+
+        return analyzeQuestion(question);
 
     });
 
 }
 
-// --------------------------------------------------
-// Create Chart
-// --------------------------------------------------
+/* -------------------------------
+   Analyze One Question
+--------------------------------*/
 
-function createChart(item, index) {
+function analyzeQuestion(question) {
 
-    const ctx = document
-        .getElementById(`chart${index}`)
-        .getContext("2d");
+    const counts = {};
 
-    new Chart(ctx, {
+    let total = 0;
 
-        type: item.chart,
+    let numeric = true;
 
-        data: {
+    let multiSelect = false;
 
-            labels: item.labels,
+    const values = [];
 
-            datasets: [{
+    state.rawData.forEach(row => {
 
-                data: item.values,
+        let answer = row[question];
 
-                backgroundColor: [
+        if (
+            answer === null ||
+            answer === undefined ||
+            answer === ""
+        ) {
+            return;
+        }
 
-                    "#3B82F6",
-                    "#10B981",
-                    "#F59E0B",
-                    "#EF4444",
-                    "#8B5CF6",
-                    "#14B8A6",
-                    "#F97316"
+        total++;
 
-                ]
+        values.push(answer);
 
-            }]
+        if (typeof answer === "string") {
 
-        },
+            if (answer.includes(",")) {
 
-        options: {
+                multiSelect = true;
 
-            responsive: true,
+            }
 
-            maintainAspectRatio: false,
+            if (isNaN(answer)) {
 
-            plugins: {
-
-                legend: {
-
-                    position: "bottom"
-
-                }
+                numeric = false;
 
             }
 
         }
 
-    });
+        else if (typeof answer !== "number") {
 
-}
+            numeric = false;
 
-// --------------------------------------------------
-// Search
-// --------------------------------------------------
-
-function applyFilters() {
-
-    const search = searchBox.value.toLowerCase();
-
-    const category = categoryFilter.value;
-
-    const filtered = surveyData.filter(item => {
-
-        const matchesSearch =
-            item.question.toLowerCase().includes(search);
-
-        const matchesCategory =
-            category === "All Categories"
-            || item.category === category;
-
-        return matchesSearch && matchesCategory;
+        }
 
     });
 
-    renderDashboard(filtered);
+    if (multiSelect) {
+
+        values.forEach(v => {
+
+            v.split(",").forEach(item => {
+
+                const option = item.trim();
+
+                if (!option) return;
+
+                counts[option] = (counts[option] || 0) + 1;
+
+            });
+
+        });
+
+    }
+
+    else {
+
+        values.forEach(v => {
+
+            counts[v] = (counts[v] || 0) + 1;
+
+        });
+
+    }
+
+    const entries = Object.entries(counts)
+
+        .sort((a, b) => b[1] - a[1]);
+
+    return {
+
+        question,
+
+        category: detectCategory(question),
+
+        total,
+
+        numeric,
+
+        multiSelect,
+
+        counts,
+
+        entries
+
+    };
 
 }
 
-// --------------------------------------------------
-// Events
-// --------------------------------------------------
+/* -------------------------------
+   Category Detection
+--------------------------------*/
 
-searchBox.addEventListener("input", applyFilters);
+function detectCategory(question) {
 
-categoryFilter.addEventListener("change", applyFilters);
+    const text = question.toLowerCase();
 
-resetButton.addEventListener("click", () => {
+    for (const category in CATEGORY_KEYWORDS) {
 
-    searchBox.value = "";
+        const words = CATEGORY_KEYWORDS[category];
 
-    categoryFilter.value = "All Categories";
+        for (const word of words) {
 
-    renderDashboard(surveyData);
+            if (text.includes(word.toLowerCase())) {
 
-});
+                return category;
 
-// --------------------------------------------------
-// Initial Render
-// --------------------------------------------------
+            }
 
-renderDashboard(surveyData);
+        }
+
+    }
+
+    return "Other";
+
+}
+
+/* -------------------------------
+   Events
+--------------------------------*/
+
+function attachEvents() {
+
+    if (searchInput) {
+
+        searchInput.addEventListener("input", e => {
+
+            state.search = e.target.value.toLowerCase();
+
+            renderDashboard();
+
+        });
+
+    }
+
+    if (categoryFilter) {
+
+        categoryFilter.addEventListener("change", e => {
+
+            state.category = e.target.value;
+
+            renderDashboard();
+
+        });
+
+    }
+
+    if (resetButton) {
+
+        resetButton.addEventListener("click", () => {
+
+            state.search = "";
+
+            state.category = "All";
+
+            searchInput.value = "";
+
+            categoryFilter.value = "All";
+
+            renderDashboard();
+
+        });
+
+    }
+
+}
+
+/* -------------------------------
+   Spinner
+--------------------------------*/
+
+function showSpinner(show) {
+
+    if (!spinner) return;
+
+    spinner.classList.toggle("d-none", !show);
+
+}
+
+/* -------------------------------
+   Dashboard Rendering
+--------------------------------*/
+
+function renderDashboard() {
+
+    destroyCharts();
+
+    dashboard.innerHTML = "";
+
+    let questions = state.questions.filter(q => {
+
+        const searchMatch = q.question
+            .toLowerCase()
+            .includes(state.search);
+
+        const categoryMatch =
+
+            state.category === "All"
+
+            ||
+
+            q.category === state.category;
+
+        return searchMatch && categoryMatch;
+
+    });
+
+    if (!questions.length) {
+
+        emptyMessage.classList.remove("d-none");
+
+        return;
+
+    }
+
+    emptyMessage.classList.add("d-none");
+
+    questions.forEach((question, index) => {
+
+        dashboard.appendChild(
+
+            createQuestionCard(question, index)
+
+        );
+
+    });
+
+}
