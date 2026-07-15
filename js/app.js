@@ -2,7 +2,7 @@ alert("app.js loaded");
 
 async function loadResponses() {
     try {
-        const response = await fetch("./data/responses.json");
+        const response = await fetch("https://mikantangerine.github.io/TPC-Survey-2026/data/responses.json");
 
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
