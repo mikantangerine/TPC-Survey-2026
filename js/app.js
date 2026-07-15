@@ -1,4 +1,4 @@
-alert("app.js loaded");
+alert("this is fetching responses.json");
 
 async function loadResponses() {
     try {
