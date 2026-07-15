@@ -4,12 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>2026 TPC Survey Dashboard</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="stylesheet" href="css/style.css">
@@ -19,20 +17,17 @@
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-
         <div class="container">
 
             <a class="navbar-brand fw-bold" href="index.html">
-                The 2026 TPC Survey
+                 2026 TPC Survey
             </a>
 
             <button class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbar">
-
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbar">
                 <span class="navbar-toggler-icon"></span>
-
             </button>
 
             <div class="collapse navbar-collapse" id="navbar">
@@ -40,11 +35,7 @@
                 <ul class="navbar-nav ms-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Overview</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="demographics.html">Demographics</a>
+                        <a class="nav-link active" href="index.html">Overview</a>
                     </li>
 
                     <li class="nav-item">
@@ -52,19 +43,19 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="religion.html">Religion</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="politics.html">Politics</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="ai.html">AI</a>
+                        <a class="nav-link" href="demographics.html">Demographics</a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link" href="methodology.html">Methodology</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="free-responses.html">Free Responses</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="bibliography.html">Bibliography</a>
                     </li>
 
                 </ul>
@@ -72,69 +63,159 @@
             </div>
 
         </div>
-
     </nav>
 
-    <header class="py-5 bg-light border-bottom">
-
+    <header class="py-5 text-white">
         <div class="container">
 
             <h1 class="display-4 fw-bold">
-                2026 TPC Survey Dashboard
+                2026 TPC Survey
             </h1>
 
-            <p class="lead text-muted">
-                Explore the survey through interactive charts and filters.
+            <p class="lead">
+                An interactive visualization of responses collected from members of The Philosophy Community.
             </p>
 
         </div>
-
     </header>
 
-    <section class="container py-4">
+    <main class="container py-5">
 
-        <div class="card shadow-sm">
+        <section class="mb-5">
 
-            <div class="card-body">
+            <div class="card">
 
-                <div class="row g-3">
+                <div class="card-body">
 
-                    <div class="col-md-4">
-                        <select class="form-select" id="categoryFilter">
-                            <option selected>All Categories</option>
-                        </select>
-                    </div>
+                    <h2 class="mb-3">About the Survey</h2>
 
-                    <div class="col-md-4">
-                        <input type="text"
-                               id="searchBox"
-                               class="form-control"
-                               placeholder="Search questions...">
-                    </div>
+                    <p>
+                        The 2026 TPC Survey explores the backgrounds, interests and philosophical views of members of
+                        The Philosophy Community. Participants answered questions on demographics, philosophy,
+                        religion, education, politics, artificial intelligence and related topics.
+                    </p>
 
-                    <div class="col-md-4 d-grid">
-                        <button class="btn btn-outline-secondary" id="resetFilters">
-                            Reset Filters
-                        </button>
-                    </div>
+                    <p class="mb-0">
+                        This website presents the aggregated results through interactive charts generated directly from
+                        the survey responses.
+                    </p>
 
                 </div>
 
             </div>
 
-        </div>
+        </section>
 
-    </section>
+        <section class="row g-4 mb-5">
 
-    <main class="container pb-5" id="dashboard">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="fa-solid fa-users"></i>
+                    <h2 id="respondentCount">--</h2>
+                    <p>Respondents</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="fa-solid fa-list"></i>
+                    <h2 id="questionCount">--</h2>
+                    <p>Questions</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="fa-solid fa-chart-column"></i>
+                    <h2>4</h2>
+                    <p>Featured Charts</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="fa-solid fa-globe"></i>
+                    <h2>2026</h2>
+                    <p>Survey Year</p>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="mb-5">
+
+            <h2 class="mb-4">Overview</h2>
+
+            <div id="dashboard"></div>
+
+        </section>
+
+        <section>
+
+            <h2 class="mb-4">Explore the Results</h2>
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4>Philosophy</h4>
+                            <p>Responses to philosophical questions, thought experiments and positions.</p>
+                            <a href="philosophy.html" class="btn btn-primary">Open</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4>Demographics</h4>
+                            <p>Background information about survey participants.</p>
+                            <a href="demographics.html" class="btn btn-primary">Open</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4>Methodology</h4>
+                            <p>Survey design, collection methods and notes on interpretation.</p>
+                            <a href="methodology.html" class="btn btn-primary">Open</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4>Free Responses</h4>
+                            <p>Read written responses submitted by participants.</p>
+                            <a href="free-responses.html" class="btn btn-primary">Open</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4>Bibliography</h4>
+                            <p>References and resources related to the survey.</p>
+                            <a href="bibliography.html" class="btn btn-primary">Open</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
     </main>
 
-    <footer class="text-center text-muted py-4 border-top">
-
+    <footer class="text-center py-4 border-top">
         <small>
-            hii
+            2026 TPC Survey Dashboard
         </small>
-
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
