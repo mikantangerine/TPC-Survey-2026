@@ -12,10 +12,10 @@ async function loadResponses() {
 
         console.log(responses);
 
-        // Store globally if needed
+       
         window.responses = responses;
 
-        // Call your chart generation here
+        
         // generateCharts(responses);
 
     } catch (err) {
