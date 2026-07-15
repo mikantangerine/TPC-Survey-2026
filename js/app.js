@@ -1,3 +1,5 @@
+alert("app.js loaded");
+
 async function loadResponses() {
     try {
         const response = await fetch("./data/responses.json");
