@@ -26,6 +26,8 @@ function generateCharts(data) {
     dashboard.innerHTML = "";
 
     const questions = Object.keys(data[0]);
+			 document.getElementById("respondentCount").textContent = data.length;
+				document.getElementById("questionCount").textContent = questions.length;
 
     const colors = [
         "#4E79A7",
