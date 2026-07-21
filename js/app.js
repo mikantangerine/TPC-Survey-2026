@@ -1,5 +1,8 @@
 alert("this is fetching responses.json");
 
+Chart.register(ChartDataLabels);
+
+
 async function loadResponses() {
     try {
         const response = await fetch("./data/responses.json");
