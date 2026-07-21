@@ -44,10 +44,11 @@ function generateCharts(data) {
             let answer = person[question];
 
             if (answer === null || answer === undefined || answer === "") {
-    answer = "No Response";
-} else {
-    answer = String(answer);
-}
+    												answer = "No Response";
+											} 
+											else {
+    									answer = String(answer);
+											}
             
 
             counts[answer] = (counts[answer] || 0) + 1;
