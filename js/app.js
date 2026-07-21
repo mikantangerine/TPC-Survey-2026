@@ -2,7 +2,6 @@ alert("this is fetching responses.json");
 
 Chart.register(ChartDataLabels);
 
-
 async function loadResponses() {
     try {
         const response = await fetch("./data/responses.json");
@@ -33,12 +32,7 @@ function generateCharts(data) {
         "#59A14F",
         "#F28E2B",
         "#E15759",
-        "#76B7B2",
-        "#EDC948",
-        "#B07AA1",
-        "#FF9DA7",
-        "#9C755F",
-        "#BAB0AC"
+        "#76B7B2"
     ];
 
     questions.forEach(question => {
@@ -54,44 +48,44 @@ function generateCharts(data) {
             }
 
             counts[answer] = (counts[answer] || 0) + 1;
-
         });
 
-        // Sort responses by frequency
         let entries = Object.entries(counts)
             .sort((a, b) => b[1] - a[1]);
 
-        // Show top 3 answers, group the rest into "Other"
         if (entries.length > 4) {
 
             const top = entries.slice(0, 3);
-            const other = entries.slice(3);
 
-            const otherCount = other.reduce((sum, item) => sum + item[1], 0);
+            const otherTotal = entries
+                .slice(3)
+                .reduce((sum, item) => sum + item[1], 0);
 
             entries = [
                 ...top,
-                ["Other", otherCount]
+                ["Other", otherTotal]
             ];
-
         }
 
-        const labels = entries.map(item => item[0]);
-        const values = entries.map(item => item[1]);
+        const labels = entries.map(e => e[0]);
+        const values = entries.map(e => e[1]);
 
-        const totalResponses = values.reduce((a, b) => a + b, 0);
+        const total = values.reduce((a, b) => a + b, 0);
 
-        const percentages = values.map(value =>
-            ((value / totalResponses) * 100).toFixed(1)
+        const percentages = values.map(v =>
+            ((v / total) * 100).toFixed(1)
         );
 
         const card = document.createElement("div");
+
         card.className = "card mb-4";
 
         card.innerHTML = `
             <div class="card-body">
                 <h5 class="card-title">${question}</h5>
-                <canvas></canvas>
+                <div style="height:${Math.max(labels.length * 55, 220)}px">
+                    <canvas></canvas>
+                </div>
             </div>
         `;
 
@@ -104,22 +98,17 @@ function generateCharts(data) {
             type: "bar",
 
             data: {
-
                 labels: labels,
 
                 datasets: [{
-
                     data: percentages,
 
                     backgroundColor: labels.map(
                         (_, i) => colors[i % colors.length]
                     ),
 
-                    borderRadius: 6,
-                    borderSkipped: false
-
+                    borderRadius: 8
                 }]
-
             },
 
             options: {
@@ -136,6 +125,19 @@ function generateCharts(data) {
                         display: false
                     },
 
+                    datalabels: {
+
+                        color: "#ffffff",
+
+                        font: {
+                            weight: "bold"
+                        },
+
+                        formatter: function(value) {
+                            return value + "%";
+                        }
+                    },
+
                     tooltip: {
 
                         callbacks: {
@@ -145,46 +147,27 @@ function generateCharts(data) {
                                 return `${values[context.dataIndex]} responses (${percentages[context.dataIndex]}%)`;
 
                             }
-
                         }
-
                     }
-
                 },
 
                 scales: {
 
                     x: {
-
                         display: false,
-
-                        grid: {
-                            display: false
-                        },
-
-                        suggestedMax: 100
-
+                        max: 100
                     },
 
                     y: {
-
                         grid: {
                             display: false
                         }
-
                     }
-
                 }
-
             }
-
         });
 
-        // Give each chart some height
-        ctx.style.height = `${Math.max(180, labels.length * 45)}px`;
-
     });
-
 }
 
 loadResponses();
