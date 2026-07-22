@@ -1,4 +1,4 @@
-alert("this is fetching responses.json");
+
 
 Chart.register(ChartDataLabels);
 
