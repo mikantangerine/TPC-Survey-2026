@@ -188,3 +188,16 @@ body.theme-dark .card-title{
 body.theme-dark .border-top{
     border-color:var(--border)!important;
 }
+
+body.theme-dark .card,
+body.theme-dark .card *,
+body.theme-dark .stat-card,
+body.theme-dark .stat-card *{
+    color:#f3f4f6 !important;
+}
+
+body.theme-dark .card p,
+body.theme-dark .card small,
+body.theme-dark .stat-card p{
+    color:#cbd5e1 !important;
+}
