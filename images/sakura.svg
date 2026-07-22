@@ -1,29 +1,68 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
 <rect width="240" height="240" fill="#fff8fc"/>
 
-<g fill="#f7a8c8" opacity=".35">
+<!-- soft sakura flowers -->
+<g fill="#f9b6d4" opacity=".35">
 
-<g transform="translate(35 45) scale(.45)">
-<path d="M70 52c6-13 18-14 21-5 2 7-3 13-10 16 9-2 18 4 16 12-3 9-15 10-24 4 6 7 7 18-1 22-8 4-16-5-17-15-1 10-9 19-17 15-8-4-7-15-1-22-9 6-21 5-24-4-2-8 7-14 16-12-7-3-12-9-10-16 3-9 15-8 21 5 1-8 5-15 10-15s9 7 10 15z"/>
+<g transform="translate(25 35) scale(.35)">
+<path d="M70 20
+C80 0 105 5 105 25
+C125 15 145 35 130 55
+C150 65 135 90 110 80
+C115 105 85 115 70 90
+C55 115 25 105 30 80
+C5 90 -10 65 10 55
+C-5 35 15 15 35 25
+C35 5 60 0 70 20Z"/>
+<circle cx="70" cy="60" r="12" fill="#ffd6e7"/>
 </g>
 
-<g transform="translate(170 80) scale(.32)">
-<path d="M70 52c6-13 18-14 21-5 2 7-3 13-10 16 9-2 18 4 16 12-3 9-15 10-24 4 6 7 7 18-1 22-8 4-16-5-17-15-1 10-9 19-17 15-8-4-7-15-1-22-9 6-21 5-24-4-2-8 7-14 16-12-7-3-12-9-10-16 3-9 15-8 21 5 1-8 5-15 10-15s9 7 10 15z"/>
+<g transform="translate(165 25) scale(.25)">
+<path d="M70 20
+C80 0 105 5 105 25
+C125 15 145 35 130 55
+C150 65 135 90 110 80
+C115 105 85 115 70 90
+C55 115 25 105 30 80
+C5 90 -10 65 10 55
+C-5 35 15 15 35 25
+C35 5 60 0 70 20Z"/>
+<circle cx="70" cy="60" r="12" fill="#ffe1ed"/>
 </g>
 
-<g transform="translate(90 170) scale(.28)">
-<path d="M70 52c6-13 18-14 21-5 2 7-3 13-10 16 9-2 18 4 16 12-3 9-15 10-24 4 6 7 7 18-1 22-8 4-16-5-17-15-1 10-9 19-17 15-8-4-7-15-1-22-9 6-21 5-24-4-2-8 7-14 16-12-7-3-12-9-10-16 3-9 15-8 21 5 1-8 5-15 10-15s9 7 10 15z"/>
+<g transform="translate(80 155 scale(.3))">
+<path d="M70 20
+C80 0 105 5 105 25
+C125 15 145 35 130 55
+C150 65 135 90 110 80
+C115 105 85 115 70 90
+C55 115 25 105 30 80
+C5 90 -10 65 10 55
+C-5 35 15 15 35 25
+C35 5 60 0 70 20Z"/>
+<circle cx="70" cy="60" r="12" fill="#ffd6e7"/>
 </g>
 
 </g>
 
-<g fill="#ffc4dd" opacity=".45">
-<circle cx="190" cy="35" r="3"/>
-<circle cx="50" cy="150" r="3"/>
-<circle cx="210" cy="180" r="4"/>
-<circle cx="25" cy="95" r="2"/>
-<circle cx="130" cy="25" r="2"/>
-<circle cx="155" cy="135" r="2"/>
+
+<!-- tiny petals -->
+<g fill="#f7a8c8" opacity=".45">
+
+<ellipse cx="190" cy="120" rx="5" ry="9" transform="rotate(35 190 120)"/>
+<ellipse cx="45" cy="190" rx="4" ry="7" transform="rotate(-25 45 190)"/>
+<ellipse cx="125" cy="90" rx="3" ry="6" transform="rotate(40 125 90)"/>
+<ellipse cx="210" cy="210" rx="3" ry="5" transform="rotate(-20 210 210)"/>
+
+</g>
+
+
+<!-- little sparkle dots -->
+<g fill="#ffc4dd" opacity=".5">
+<circle cx="30" cy="110" r="2"/>
+<circle cx="150" cy="45" r="2"/>
+<circle cx="220" cy="70" r="2"/>
+<circle cx="95" cy="25" r="2"/>
 </g>
 
 </svg>
