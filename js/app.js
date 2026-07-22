@@ -4,30 +4,49 @@ Chart.register(ChartDataLabels);
 
 async function loadResponses() {
     try {
-        const response = await fetch("./data/responses.json");
 
-        if (!response.ok) {
+        const [responseResult, questionResult] = await Promise.all([
+            fetch("./data/responses.json"),
+            fetch("./data/questions.json")
+        ]);
+
+        if (!responseResult.ok) {
             throw new Error("Couldn't load responses.json");
         }
 
-        const data = await response.json();
+        if (!questionResult.ok) {
+            throw new Error("Couldn't load questions.json");
+        }
 
-        generateCharts(data);
+        const data = await responseResult.json();
+        const questionGroups = await questionResult.json();
+
+        generateCharts(data, questionGroups);
 
     } catch (err) {
+
         document.getElementById("dashboard").innerHTML =
             `<div class="alert alert-danger">${err.message}</div>`;
+
     }
 }
 
-function generateCharts(data) {
+function generateCharts(data, questionGroups) {
 
     const dashboard = document.getElementById("dashboard");
     dashboard.innerHTML = "";
 
-    const questions = Object.keys(data[0]);
-			 document.getElementById("respondentCount").textContent = data.length;
-				document.getElementById("questionCount").textContent = questions.length;
+    const questions = questionGroups[pageGroup] || [];
+
+    const respondentCount = document.getElementById("respondentCount");
+    if (respondentCount) {
+        respondentCount.textContent = data.length;
+    }
+
+    const questionCount = document.getElementById("questionCount");
+    if (questionCount) {
+        questionCount.textContent = questions.length;
+    }
 
     const colors = [
         "#4E79A7",
@@ -46,14 +65,13 @@ function generateCharts(data) {
             let answer = person[question];
 
             if (answer === null || answer === undefined || answer === "") {
-    												answer = "No Response";
-											} 
-											else {
-    									answer = String(answer);
-											}
-            
+                answer = "No Response";
+            } else {
+                answer = String(answer);
+            }
 
             counts[answer] = (counts[answer] || 0) + 1;
+
         });
 
         let entries = Object.entries(counts)
@@ -71,6 +89,7 @@ function generateCharts(data) {
                 ...top,
                 ["Other", otherTotal]
             ];
+
         }
 
         const labels = entries.map(e => e[0]);
@@ -104,9 +123,11 @@ function generateCharts(data) {
             type: "bar",
 
             data: {
+
                 labels: labels,
 
                 datasets: [{
+
                     data: percentages,
 
                     backgroundColor: labels.map(
@@ -114,7 +135,9 @@ function generateCharts(data) {
                     ),
 
                     borderRadius: 8
+
                 }]
+
             },
 
             options: {
@@ -142,6 +165,7 @@ function generateCharts(data) {
                         formatter: function(value) {
                             return value + "%";
                         }
+
                     },
 
                     tooltip: {
@@ -153,8 +177,11 @@ function generateCharts(data) {
                                 return `${values[context.dataIndex]} responses (${percentages[context.dataIndex]}%)`;
 
                             }
+
                         }
+
                     }
+
                 },
 
                 scales: {
@@ -169,11 +196,15 @@ function generateCharts(data) {
                             display: false
                         }
                     }
+
                 }
+
             }
+
         });
 
     });
+
 }
 
 loadResponses();
