@@ -162,3 +162,29 @@ header h1{
 }
 
 }
+
+body.theme-dark,
+body.theme-dark h1,
+body.theme-dark h2,
+body.theme-dark h3,
+body.theme-dark h4,
+body.theme-dark h5,
+body.theme-dark h6,
+body.theme-dark p,
+body.theme-dark small,
+body.theme-dark label,
+body.theme-dark li{
+    color:var(--text);
+}
+
+body.theme-dark .card{
+    color:var(--text);
+}
+
+body.theme-dark .card-title{
+    color:var(--text);
+}
+
+body.theme-dark .border-top{
+    border-color:var(--border)!important;
+}
