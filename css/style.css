@@ -80,8 +80,10 @@ body{
 }
 
 body.theme-pink{
-    background:#fff8fc url("../images/sakura.svg") repeat fixed;
-    background-size:300px;
+    background:
+    radial-gradient(circle at 20% 20%, #ffd6e7 0 3%, transparent 4%),
+    radial-gradient(circle at 80% 70%, #fbcfe8 0 4%, transparent 5%),
+    #fff8fc;
 }
 
 .navbar{
