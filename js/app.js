@@ -87,6 +87,9 @@ function generateCharts(data, questionGroups) {
 
         let hiddenAnswers = [];
 
+        let isExpanded = false;
+        const fullEntries = entries; // keep a copy of ALL entries before we collapse anything
+
 
         if (entries.length > 4) {
 
@@ -138,6 +141,7 @@ function generateCharts(data, questionGroups) {
 
 
         const ctx = card.querySelector("canvas");
+        const heightDiv = card.querySelector(".card-body > div");
 
 
         const chart = new Chart(ctx, {
@@ -233,19 +237,59 @@ function generateCharts(data, questionGroups) {
 
         });
 
+ctx.onclick = function(event) {
+
+    const points = chart.getElementsAtEventForMode(
+        event, "nearest", { intersect: true }, true
+    );
+
+    if (!points.length) return;
+
+    const index = points[0].index;
+
+    const clickedOther = labels[index] === "Other";
+    const clickedIsHiddenAnswer = isExpanded && hiddenAnswers.some(x => x[0] === labels[index]);
+
+    if (!clickedOther && !clickedIsHiddenAnswer) return;
+
+    isExpanded = !isExpanded;
+
+    let newEntries;
+    if (isExpanded) {
+        newEntries = fullEntries; // show everything
+    } else {
+        newEntries = [
+            ...fullEntries.slice(0, 3),
+            ["Other", hiddenAnswers.reduce((sum, item) => sum + item[1], 0)]
+        ];
+    }
+
+    labels = newEntries.map(e => e[0]);
+    values = newEntries.map(e => e[1]);
+    percentages = values.map(v =>
+        ((v / values.reduce((a, b) => a + b, 0)) * 100).toFixed(1)
+    );
+
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = percentages;
+    chart.data.datasets[0].backgroundColor = labels.map((_, i) => colors[i % colors.length]);
+
+    heightDiv.style.height = `${Math.max(labels.length * 55, 220)}px`;
+    chart.resize();
+    chart.update();
+};
+
+       // ctx.onclick = function(event) {
 
 
-        ctx.onclick = function(event) {
-
-
-            const points = chart.getElementsAtEventForMode(
-                event,
-                "nearest",
-                {
-                    intersect:true
-                },
-                true
-            );
+        //    const points = chart.getElementsAtEventForMode(
+             //   event,
+              //  "nearest",
+              //  {
+                //    intersect:true
+              //  },
+             //   true
+          //  );
 
 
             if (!points.length) return;
