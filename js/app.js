@@ -274,9 +274,12 @@ ctx.onclick = function(event) {
     chart.data.datasets[0].data = percentages;
     chart.data.datasets[0].backgroundColor = labels.map((_, i) => colors[i % colors.length]);
 
-    heightDiv.style.height = `${Math.max(labels.length * 55, 220)}px`;
+   heightDiv.style.height = `${Math.max(labels.length * 55, 220)}px`;
+
+requestAnimationFrame(() => {
     chart.resize();
     chart.update();
+});
 };
 
 
