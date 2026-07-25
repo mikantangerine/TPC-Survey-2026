@@ -127,9 +127,9 @@ function generateCharts(data, questionGroups) {
                 <div style="height:${Math.max(labels.length * 55, 220)}px">
                     <canvas></canvas>
                 </div>
-                <small class="text-muted">
-                    Click "Other" to view all options
-                </small>
+                    <small class="toggle-text text-muted" style="cursor:pointer; text-decoration:underline;">
+                        Click "Other" to view all options
+                    </small>
             </div>
         `;
 
@@ -138,7 +138,8 @@ function generateCharts(data, questionGroups) {
 
 
         const ctx = card.querySelector("canvas");
-
+        const heightDiv = card.querySelector(".card-body > div");
+        const toggleText = card.querySelector(".toggle-text");
 
         const chart = new Chart(ctx, {
 
@@ -238,66 +239,54 @@ function generateCharts(data, questionGroups) {
         ctx.onclick = function(event) {
 
 
-            const points = chart.getElementsAtEventForMode(
-                event,
-                "nearest",
-                {
-                    intersect:true
-                },
-                true
-            );
+ctx.onclick = function(event) {
 
+    const points = chart.getElementsAtEventForMode(
+        event, "nearest", { intersect: true }, true
+    );
 
-            if (!points.length) return;
+    if (!points.length) return;
 
+    const index = points[0].index;
 
-            const index = points[0].index;
+    const clickedOther = labels[index] === "Other";
 
+    if (!clickedOther && !isExpanded) return;
 
-            if (labels[index] === "Other" && hiddenAnswers.length) {
+    isExpanded = !isExpanded;
 
+    let newEntries;
+    if (isExpanded) {
+        newEntries = fullEntries;
+    } else {
+        newEntries = [
+            ...fullEntries.slice(0, 3),
+            ["Other", hiddenAnswers.reduce((sum, item) => sum + item[1], 0)]
+        ];
+    }
 
-                labels.splice(
-                    index,
-                    1,
-                    ...hiddenAnswers.map(x => x[0])
-                );
+    labels = newEntries.map(e => e[0]);
+    values = newEntries.map(e => e[1]);
+    percentages = values.map(v =>
+        ((v / values.reduce((a, b) => a + b, 0)) * 100).toFixed(1)
+    );
 
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = percentages;
+    chart.data.datasets[0].backgroundColor = labels.map((_, i) => colors[i % colors.length]);
 
-                values.splice(
-                    index,
-                    1,
-                    ...hiddenAnswers.map(x => x[1])
-                );
+    const newHeight = Math.max(labels.length * 55, 220);
+    heightDiv.style.height = `${newHeight}px`;
 
+    requestAnimationFrame(() => {
+        chart.resize(heightDiv.clientWidth, newHeight);
+        chart.update();
+    });
 
-                percentages = values.map(v =>
-                    ((v / values.reduce((a,b)=>a+b,0)) * 100).toFixed(1)
-                );
-
-
-                chart.data.labels = labels;
-
-                chart.data.datasets[0].data = percentages;
-
-
-                chart.data.datasets[0].backgroundColor =
-                    labels.map(
-                        (_, i) => colors[i % colors.length]
-                    );
-
-
-                chart.options.plugins.datalabels.formatter =
-                    function(value){
-                        return value + "%";
-                    };
-
-
-                chart.update();
-
-            }
-
-        };
+    toggleText.textContent = isExpanded
+        ? 'Click any bar to collapse'
+        : 'Click "Other" to view all options';
+};
 
 
     });
