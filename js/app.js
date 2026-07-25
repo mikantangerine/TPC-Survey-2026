@@ -130,9 +130,9 @@ function generateCharts(data, questionGroups) {
                 <div style="height:${Math.max(labels.length * 55, 220)}px">
                     <canvas></canvas>
                 </div>
-                <small class="text-muted">
-                    Click "Other" to view all options
-                </small>
+                    <small class="toggle-text text-muted" style="cursor:pointer; text-decoration:underline;">
+                        Click "Other" to view all options
+                    </small>
             </div>
         `;
 
@@ -142,7 +142,7 @@ function generateCharts(data, questionGroups) {
 
         const ctx = card.querySelector("canvas");
         const heightDiv = card.querySelector(".card-body > div");
-
+        const toggleText = card.querySelector(".toggle-text");
 
         const chart = new Chart(ctx, {
 
@@ -248,15 +248,14 @@ ctx.onclick = function(event) {
     const index = points[0].index;
 
     const clickedOther = labels[index] === "Other";
-    const clickedIsHiddenAnswer = isExpanded && hiddenAnswers.some(x => x[0] === labels[index]);
 
-    if (!clickedOther && !clickedIsHiddenAnswer) return;
+    if (!clickedOther && !isExpanded) return;
 
     isExpanded = !isExpanded;
 
     let newEntries;
     if (isExpanded) {
-        newEntries = fullEntries; // show everything
+        newEntries = fullEntries;
     } else {
         newEntries = [
             ...fullEntries.slice(0, 3),
@@ -274,12 +273,16 @@ ctx.onclick = function(event) {
     chart.data.datasets[0].data = percentages;
     chart.data.datasets[0].backgroundColor = labels.map((_, i) => colors[i % colors.length]);
 
-   heightDiv.style.height = `${Math.max(labels.length * 55, 220)}px`;
+    const newHeight = Math.max(labels.length * 55, 220);
+    heightDiv.style.height = `${newHeight}px`;
 
-requestAnimationFrame(() => {
-    chart.resize();
-    chart.update();
-});
+    requestAnimationFrame(() => {
+        chart.resize(heightDiv.clientWidth, newHeight);
+        chart.update();
+    });
+    toggleText.textContent = isExpanded
+        ? 'Click any bar to collapse'
+        : 'Click "Other" to view all options';
 };
 
 
