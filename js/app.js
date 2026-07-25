@@ -87,6 +87,9 @@ function generateCharts(data, questionGroups) {
 
         let hiddenAnswers = [];
 
+        let isExpanded = false;
+        const fullEntries = entries;
+
 
         if (entries.length > 4) {
 
@@ -236,7 +239,6 @@ function generateCharts(data, questionGroups) {
 
 
 
-        ctx.onclick = function(event) {
 
 
 ctx.onclick = function(event) {
