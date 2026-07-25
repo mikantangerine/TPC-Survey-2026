@@ -29,6 +29,13 @@ async function loadResponses() {
     }
 }
 
+const multiSelectQuestions = [
+    "Which fields of non-philosophical study or formal knowledge would you say that you have at least undergraduate level knowledge in?",
+    "In what ways do you engage in philosophy in your daily life?",
+    "Which fields of Philosophy do you consider to be your strengths?\n\nThis list is non-exhaustive. Enter your specific subfield into Others.",
+    "Which areas of philosophy have you actively engaged with/are you most interested in?"
+];
+
 
 function generateCharts(data, questionGroups) {
 
@@ -66,19 +73,29 @@ function generateCharts(data, questionGroups) {
         const counts = {};
 
 
-        data.forEach(person => {
+       const isMultiSelect = multiSelectQuestions.includes(question);
 
-            let answer = person[question];
+data.forEach(person => {
 
-            if (answer === null || answer === undefined || answer === "") {
-                answer = "No Response";
-            } else {
-                answer = String(answer);
-            }
+    let answer = person[question];
 
-            counts[answer] = (counts[answer] || 0) + 1;
+    if (answer === null || answer === undefined || answer === "") {
+        counts["No Response"] = (counts["No Response"] || 0) + 1;
+        return;
+    }
 
+    answer = String(answer);
+
+    if (isMultiSelect) {
+        const parts = answer.split(",").map(p => p.trim()).filter(p => p.length > 0);
+        parts.forEach(part => {
+            counts[part] = (counts[part] || 0) + 1;
         });
+    } else {
+        counts[answer] = (counts[answer] || 0) + 1;
+    }
+
+});
 
 
         let entries = Object.entries(counts)
@@ -161,7 +178,9 @@ function generateCharts(data, questionGroups) {
                         (_, i) => colors[i % colors.length]
                     ),
 
-                    borderRadius: 8
+                    borderRadius: 8,
+                    categoryPercentage: 0.7,
+                     barPercentage: 0.9
 
                 }]
 
@@ -219,19 +238,50 @@ function generateCharts(data, questionGroups) {
 
                 scales: {
 
-                    x:{
-                        display:false,
-                        max:100
-                    },
+    x:{
+        display:false,
+        max:100
+    },
 
 
-                    y:{
-                        grid:{
-                            display:false
-                        }
-                    }
+    y:{
+        grid:{
+            display:false
+        },
+        ticks: {
+            autoSkip: false,
+            callback: function(value) {
+                const label = this.getLabelForValue(value);
+                const maxCharsPerLine = 20;
 
+                if (label.length <= maxCharsPerLine) {
+                    return label;
                 }
+
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+
+                words.forEach(word => {
+                    if ((currentLine + ' ' + word).trim().length > maxCharsPerLine) {
+                        lines.push(currentLine.trim());
+                        currentLine = word;
+                    } else {
+                        currentLine = (currentLine + ' ' + word).trim();
+                    }
+                });
+
+                if (currentLine) lines.push(currentLine);
+
+                return lines;
+            }
+        },
+        afterFit: function(scale) {
+        scale.width = Math.max(scale.width, 150);
+    }
+    }
+
+}
 
             }
 
@@ -293,111 +343,3 @@ ctx.onclick = function(event) {
 
 loadResponses();
 
-
-
-const themes = [
-    "light",
-    "dark",
-    "pink"
-];
-
-
-let currentTheme = localStorage.getItem("theme") || "light";
-
-
-applyTheme(currentTheme);
-
-
-
-const themeButton = document.getElementById("themeToggle");
-
-
-if (themeButton) {
-
-
-    updateThemeButton();
-
-
-    themeButton.addEventListener("click", () => {
-
-
-        const currentIndex = themes.indexOf(currentTheme);
-
-
-        currentTheme =
-            themes[(currentIndex + 1) % themes.length];
-
-
-        applyTheme(currentTheme);
-
-
-        localStorage.setItem(
-            "theme",
-            currentTheme
-        );
-
-
-        updateThemeButton();
-
-
-    });
-
-
-}
-
-
-
-function applyTheme(theme) {
-
-
-    document.body.classList.remove(
-        "theme-dark",
-        "theme-pink"
-    );
-
-
-    if (theme === "dark") {
-
-        document.body.classList.add(
-            "theme-dark"
-        );
-
-    }
-
-
-    if (theme === "pink") {
-
-        document.body.classList.add(
-            "theme-pink"
-        );
-
-    }
-
-}
-
-
-
-function updateThemeButton() {
-
-
-    if (currentTheme === "light") {
-
-        themeButton.textContent = "🌞";
-
-    }
-
-
-    if (currentTheme === "dark") {
-
-        themeButton.textContent = "🌙";
-
-    }
-
-
-    if (currentTheme === "pink") {
-
-        themeButton.textContent = "🌸";
-
-    }
-
-}
