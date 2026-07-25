@@ -95,3 +95,12 @@
     transform:translateY(-4px);
     box-shadow:0 12px 28px rgba(0,0,0,.12);
 }
+
+.response-item{
+    background:var(--surface);
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:1rem 1.25rem;
+    opacity:.92;
+}
